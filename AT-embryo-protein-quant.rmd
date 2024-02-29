@@ -1,0 +1,60 @@
+---
+title: "AT-embryo-protein-quant"
+author: "Andrew Garcia"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#AT embryo protein data (aggregated)
+```{r}
+AT.prot <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSQz3H6XvPeutD-g8ymmvoNs8qexz8el0kufuaaJNXY50PzZ6tZ_CTxyzj65Bg17Svm-YzNYlBATZAy/pub?gid=0&single=true&output=csv",
+         header = T)
+
+AT.prot$sample.ID <- as.factor(AT.prot$sample.ID)
+AT.prot$Theiler.stage<- as.factor(AT.prot$Theiler.stage)
+AT.prot$original.lysis.ID <-as.factor(AT.prot$original.lysis.ID)
+AT.prot$Naa10.genotype <- as.factor(AT.prot$Naa10.genotype)
+
+
+
+
+head(AT.prot)
+```
+## Summary statistics
+```{r}
+install.packages("Rmisc")
+```
+### find average for samples with replicate measures of total protein
+```{r}
+library(Rmisc)
+
+AT_sum <- summarySE(AT.prot,measurevar = "total.protein",
+                   groupvar = c("sample.ID"), na.rm=T )
+
+AT_sum
+```
+
+AT23-6 is anticipated to be a high-leverage sample
+
+### average total protein per Theiler stage
+```{r}
+AT_TS <- summarySE(AT.prot,measurevar = "total.protein",
+                   groupvar = c("Theiler.stage"),na.rm = T)
+
+AT_TS
+```
+
+
+
+### average total protein per lysis batch
+```{r}
+AT_lys <- summarySE(AT.prot, measurevar = "total.protein",
+                    groupvar = c("original.lysis.ID","Theiler.stage"),na.rm = T)
+
+AT_lys
+```
+
